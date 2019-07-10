@@ -1,6 +1,7 @@
 from claptcha import Claptcha
 from django.shortcuts import render
 from django.http import HttpResponse
+import json
 from PIL import Image
 import random
 from rest_framework.response import Response
@@ -26,6 +27,7 @@ def generateRandomCaptcha(n=6):
 
 
 def generateCaptchaImage():
+	global CAPTCHA_TEXT
 	c = Claptcha(generateRandomCaptcha(), 'captcha/FreeMono.ttf',
 			resample=Image.BICUBIC, noise=0.3)
 
@@ -38,11 +40,19 @@ def generateCaptchaImage():
 @api_view()
 def returnCaptcha(request):
 	text = generateCaptchaImage()
-	print(text)	
+	#print(text)	
 	with open('captcha/static/captcha/captcha.png', 'rb') as f:
 		return HttpResponse(f.read(), content_type='image/png')
 
 		
-@api_view(['POST'])
-def matchCaptchaText(request):
-	print(request.data)
+@api_view()
+def matchCaptchaText(request, text):
+	global CAPTCHA_TEXT
+	#print(text, CAPTCHA_TEXT)
+	if text==CAPTCHA_TEXT:
+		CAPTCHA_TEXT = ''
+		status = {'status':True}
+		return HttpResponse(json.dumps(status))
+	else:
+		status = {'status':False}
+		return HttpResponse(json.dumps(status))
