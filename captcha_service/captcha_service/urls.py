@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include
-
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from . import settings
 
@@ -26,7 +26,9 @@ from . import settings
 urlpatterns = [
 	#path('captcha/',include('captcha.urls')),
     path('admin/', admin.site.urls),
-    path('api/', include('captcha.urls'), name='api')
+    path('api/', include('captcha.urls'), name='api'),
+    path('api/token/', TokenObtainPairView.as_view()),
+    path('api/token/refresh', TokenRefreshView.as_view())
 ]
 
 

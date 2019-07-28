@@ -6,7 +6,8 @@ from PIL import Image
 import random
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 import string
 
 from . import serializers
@@ -38,7 +39,9 @@ def generateCaptchaImage():
 
 
 @api_view()
+@permission_classes([IsAuthenticated])
 def returnCaptcha(request):
+	print(request.META['USERNAME'])
 	text = generateCaptchaImage()
 	#print(text)	
 	with open('captcha/static/captcha/captcha.png', 'rb') as f:
